@@ -1,0 +1,95 @@
+-- Criação do banco de dados
+CREATE DATABASE Escola;
+USE Escola;
+
+-- Criação das Tabelas
+
+-- Tabela Alunos
+CREATE TABLE Alunos (
+    id_aluno INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    endereco VARCHAR(255) NOT NULL
+);
+
+-- Tabela Cursos
+CREATE TABLE Cursos (
+    id_curso INT AUTO_INCREMENT PRIMARY KEY,
+    nome_curso VARCHAR(100) NOT NULL,
+    descricao TEXT
+);
+
+-- Tabela Notas
+CREATE TABLE Notas (
+    id_nota INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT,
+    id_curso INT,
+    nota DECIMAL(5,2) NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES Alunos(id_aluno),
+    FOREIGN KEY (id_curso) REFERENCES Cursos(id_curso)
+);
+
+-- Inserção de Dados
+
+-- Inserindo Alunos
+INSERT INTO Alunos (nome, data_nascimento, endereco) VALUES
+('Ana Silva', '1995-03-12', 'Rua das Flores, 123'),
+('Carlos Oliveira', '1996-07-24', 'Avenida Central, 456'),
+('Juliana Santos', '1994-11-30', 'Praça da Liberdade, 789');
+
+-- Inserindo Cursos
+INSERT INTO Cursos (nome_curso, descricao) VALUES
+('Matemática', 'Curso de Matemática Básica'),
+('História', 'Curso de História Geral'),
+('Biologia', 'Curso de Biologia e Ecologia');
+
+-- Inserindo Notas
+INSERT INTO Notas (id_aluno, id_curso, nota) VALUES
+(1, 1, 8.5),
+(1, 2, 9.0),
+(2, 1, 7.0),
+(2, 3, 6.5),
+(3, 2, 8.0);
+
+-- Consultas
+
+-- 1. Listar todos os alunos e suas notas em cada curso
+SELECT
+    A.nome AS aluno,
+    C.nome_curso AS curso,
+    N.nota
+FROM
+    Notas N
+JOIN
+    Alunos A ON N.id_aluno = A.id_aluno
+JOIN
+    Cursos C ON N.id_curso = C.id_curso;
+
+-- 2. Calcular a média das notas para cada curso
+SELECT
+    C.nome_curso AS curso,
+    AVG(N.nota) AS media_nota
+FROM
+    Notas N
+JOIN
+    Cursos C ON N.id_curso = C.id_curso
+GROUP BY
+    C.nome_curso;
+
+-- 3. Encontrar o aluno com a maior nota em cada curso
+SELECT
+    C.nome_curso AS curso,
+    A.nome AS aluno,
+    N.nota
+FROM
+    Notas N
+JOIN
+    Alunos A ON N.id_aluno = A.id_aluno
+JOIN
+    Cursos C ON N.id_curso = C.id_curso
+WHERE
+    N.nota = (
+        SELECT MAX(nota)
+        FROM Notas
+        WHERE id_curso = N.id_curso
+    );
