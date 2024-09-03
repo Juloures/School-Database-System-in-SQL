@@ -1,0 +1,16 @@
+# SQL dumps
+*.sql
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Backup files
+*.bak
+
+# Other database files
+*.db
+*.db-journal
+*.sqlite
